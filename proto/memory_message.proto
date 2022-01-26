@@ -8,7 +8,8 @@ message Memory {
     KILOBYTE = 3;
     MEGABYTE = 4;
     GIGABYTE = 5;
+    TERABYTE = 6;
   }
-  uint32 value = 1;
+  uint64 value = 1;
   Unit unit = 2;
 }
