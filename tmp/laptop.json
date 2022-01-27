@@ -1,27 +1,27 @@
 {
- "id": "53d4fb4c-1f4c-4c35-80cf-362c67e4f9f6",
- "brand": "Apple",
- "name": "Macbook Air",
+ "id": "fbb2e74e-88a4-464a-b923-649eb6ee5781",
+ "brand": "Dell",
+ "name": "XPS",
  "cpu": {
-  "brand": "Intel",
-  "name": "Ryzen 7 PRO 2700U",
-  "number_cores": 2,
+  "brand": "AMD",
+  "name": "Ryzen 7 PRO 49990U",
+  "number_cores": 8,
   "number_threads": 9,
-  "min_ghz": 2.7200304669457904,
-  "max_ghz": 4.56727996960851
+  "min_ghz": 2.583020136846131,
+  "max_ghz": 3.1920509668716703
  },
  "memory": {
-  "value": "64",
+  "value": "39",
   "unit": "GIGABYTE"
  },
  "gpus": [
   {
    "brand": "Nvidia",
-   "name": "RTX 2070-SUPER",
-   "min_ghz": 2.2194116408300686,
-   "max_ghz": 7.146380060550209,
+   "name": "RTX 3080",
+   "min_ghz": 3.05002075032363,
+   "max_ghz": 5.991672527923548,
    "memory": {
-    "value": "2",
+    "value": "3",
     "unit": "GIGABYTE"
    }
   }
@@ -30,33 +30,33 @@
   {
    "driver": "SSD",
    "memory": {
-    "value": "615",
+    "value": "551",
     "unit": "GIGABYTE"
    }
   },
   {
    "driver": "HDD",
    "memory": {
-    "value": "3",
+    "value": "1",
     "unit": "TERABYTE"
    }
   }
  ],
  "screen": {
-  "size_inch": 16.054098,
+  "size_inch": 15.93842,
   "resolution": {
-   "width": 4712,
-   "height": 2651
+   "width": 2659,
+   "height": 1496
   },
   "panel": "OLED",
   "multitouch": false
  },
  "keyboard": {
-  "layout": "QWERTZ",
+  "layout": "QWERTY",
   "backlit": false
  },
- "weight_kg": 2.3532565793698237,
- "price": 1602.3118046897812,
- "release_year": 2021,
- "update_at": "2022-01-26T11:40:28.611861Z"
+ "weight_kg": 2.787677868054269,
+ "price": 1836.8301691938354,
+ "release_year": 2020,
+ "update_at": "2022-01-26T15:08:08.130527Z"
 }
