@@ -10,7 +10,7 @@ import (
 	"sync"
 )
 
-// ErrAlreadyExists is returned when a record with the same id already exists in the store
+// ErrAlreadyExists is returned when a record with the same ID already exists in the store
 var ErrAlreadyExists = errors.New("record already exists")
 
 // LaptopStore interface 可以通过不同的存储方式去实现 这里提供了存储方式里边需要实现的方法
@@ -19,7 +19,7 @@ type LaptopStore interface {
 	Save(laptop *pb.Laptop) error
 	// Find finds a laptop by ID
 	Find(id string) (*pb.Laptop, error)
-	// Search laptop by id
+	// Search searches for laptops with filter, returns one by one via the found function
 	Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop) error) error
 }
 
@@ -53,11 +53,12 @@ func (store *InMemoryLaptopStore) Save(laptop *pb.Laptop) error {
 	if err != nil {
 		return err
 	}
+
 	store.data[other.Id] = other
 	return nil
 }
 
-// Find finds the laptop by id
+// Find finds a laptop by ID
 func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
@@ -66,42 +67,45 @@ func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 	if laptop == nil {
 		return nil, nil
 	}
-	// deep copy
+
 	return deepCopy(laptop)
 }
 
-// Search searches for laptops with filter ,return one by one via the found function
+// Search searches for laptops with filter, returns one by one via the found function
 func (store *InMemoryLaptopStore) Search(
 	ctx context.Context,
 	filter *pb.Filter,
 	found func(laptop *pb.Laptop) error, //回调函数 func(laptop *pb.Laptop) error 用来通知
 ) error {
-	store.mutex.Lock()
-	defer store.mutex.Unlock()
-	for _, laptop := range store.data {
-		//heavy processing
-		//time.Sleep(time.Second)
-		log.Printf("check id: %v", laptop.GetId())
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
 
+	for _, laptop := range store.data {
 		if ctx.Err() == context.Canceled || ctx.Err() == context.DeadlineExceeded {
-			log.Printf("context is canceled")
-			return fmt.Errorf("context is canceled")
+			log.Print("context is cancelled")
+			return nil
 		}
-		if isQualified(laptop, filter) {
+
+		// time.Sleep(time.Second)
+		// log.Print("checking laptop id: ", laptop.GetId())
+
+		if isQualified(filter, laptop) {
 			other, err := deepCopy(laptop)
 			if err != nil {
 				return err
 			}
+
 			err = found(other)
 			if err != nil {
 				return err
 			}
 		}
 	}
+
 	return nil
 }
 
-func isQualified(laptop *pb.Laptop, filter *pb.Filter) bool {
+func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
 	if laptop.GetPriceUsd() > filter.GetMaxPriceUsed() {
 		return false
 	}
@@ -117,6 +121,7 @@ func isQualified(laptop *pb.Laptop, filter *pb.Filter) bool {
 	if toBit(laptop.GetRam()) < toBit(filter.GetMinRam()) {
 		return false
 	}
+
 	return true
 }
 
@@ -127,9 +132,9 @@ func toBit(memory *pb.Memory) uint64 {
 	case pb.Memory_BIT:
 		return value
 	case pb.Memory_BYTE:
-		return value << 3 //8 =2^3
+		return value << 3 // 8 = 2^3
 	case pb.Memory_KILOBYTE:
-		return value << 13 // 1024 =2^13
+		return value << 13 // 1024 * 8 = 2^10 * 2^3 = 2^13
 	case pb.Memory_MEGABYTE:
 		return value << 23
 	case pb.Memory_GIGABYTE:
@@ -143,9 +148,11 @@ func toBit(memory *pb.Memory) uint64 {
 
 func deepCopy(laptop *pb.Laptop) (*pb.Laptop, error) {
 	other := &pb.Laptop{}
+
 	err := copier.Copy(other, laptop)
 	if err != nil {
 		return nil, fmt.Errorf("cannot copy laptop data: %w", err)
 	}
+
 	return other, nil
 }
