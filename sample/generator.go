@@ -102,7 +102,7 @@ func NewLaptop() *pb.Laptop {
 		Brand:    brand,
 		Name:     name,
 		Cpu:      NewCPU(),
-		Memory:   NewRAM(),
+		Ram:      NewRAM(),
 		Gpus:     []*pb.GPU{NewGPU()},
 		Storages: []*pb.Storage{NewSSD(), NewHDD()},
 		Screen:   NewScreen(),
@@ -110,7 +110,7 @@ func NewLaptop() *pb.Laptop {
 		Weight: &pb.Laptop_WeightKg{
 			WeightKg: randomFloat64(1.0, 3.0),
 		},
-		Price:       randomFloat64(1500, 3000),
+		PriceUsd:    randomFloat64(1500, 3000),
 		ReleaseYear: uint32(randomInt(2020, 2022)),
 		UpdateAt:    timestamppb.Now(),
 	}
